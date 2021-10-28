@@ -1,11 +1,18 @@
 import flask
+from flask import jsonify
+import json
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
+a = {"name": "ok"}
 
 @app.route('/', methods=['GET'])
-def home():
-    return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
+def homePage():
+    return a
+
+@app.route('/<idi>', methods=['GET'])
+def pageById(idi):
+    return idi
 
 app.run()
