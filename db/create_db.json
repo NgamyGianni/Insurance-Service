@@ -1,0 +1,4 @@
+{
+  "insurance":
+  "CREATE TABLE IF NOT EXISTS \"insurance\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \"key\" TEXT NOT NULL UNIQUE, \"name\" TEXT, \"amount\",\"FLAG\" BOOLEAN NOT NULL)"
+}
