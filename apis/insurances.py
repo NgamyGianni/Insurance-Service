@@ -11,11 +11,24 @@ api = Api(
 )
 name_space = api.namespace('insurances', description='insurances APIs')
 resource_fields = api.model('Resource', {
+})
+
+resource_fields1 = api.inherit('Resource1', resource_fields, {
     'code_insurance': fields.String,
     'insurance_name': fields.String,
     'insurance_actived': fields.Boolean,
 
 })
+
+resource_fields2 = api.inherit('Resource2', resource_fields, {
+    'insuranceContractCode': fields.String,
+    'insurance_code' : fields.String,
+    'dealCode': fields.String,
+    'facilityCode': fields.String,
+    'amount': fields.Float,
+    'currency': fields.String
+})
+
 
 
 @api.route('/api/v1/insurances')
@@ -29,7 +42,7 @@ class insurances(Resource):
 
     @api.response(200, 'Success')
     @api.response(400, 'Validation Error')
-    @api.expect(resource_fields)
+    @api.expect(resource_fields1)
     def post(self):
 
         content = request.json
@@ -66,7 +79,42 @@ class insuranceid(Resource):
             return {'error': 'wrong request'}, 400
         result = json.dumps(response)
         if response['change_success'] == 1:
-            # respPut = changeContract(code_contract)
             return "Flag changed with success"
         return jsonify(result)
 
+@api.route('/api/v1/deals/<deal_code>/insurance-contracts')
+@api.doc(params={'deal_code': 'insurance-contract code'})
+class insurance_Contract(Resource):
+    @api.response(200, 'Success')
+    def get(self,deal_code):
+        """Returns list of insurances."""
+        result = db_binder.searchInsuranceContractByDeal(deal_code)
+        statusCode = 200
+        if result == -1:
+            return {'error': "contract don't exist"}, 400
+        return Response(json.dumps(result), status=statusCode, mimetype='application/json')
+        
+
+       
+@api.route('/api/v1/deals/{deal-code}/facilities/{facility-code}/insurance-contracts')
+class insurance_Contract2(Resource):
+    
+    @api.response(200, 'Success')
+    @api.response(400, 'Validation Error')
+    @api.expect(resource_fields2)
+    def post(self):
+
+        content = request.json
+        print (content)
+        contractKey = content['insuranceContractCode']
+        codeAssurance = content['insurance_code']
+        codeDeal = content['dealCode']
+        codeFacility = content['facilityCode']
+        amount = content['amount']
+        currency = content['currency']
+
+        response = db_binder.createInsuranceContract(contractKey,codeAssurance,codeDeal,codeFacility,amount,currency)
+        if response == False:
+            return {'error': 'wrong request'}, 400
+        result = json.dumps(response)
+        return jsonify(result)

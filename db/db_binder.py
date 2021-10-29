@@ -76,10 +76,8 @@ def createInsurance(idInsurance,n,f):
 
 
 
-def updateFlag(idInsurance):
-    
+def updateFlag(idInsurance):  
     conn = sql.connect('DB/insuranceDB.db')
-
     cursor = conn.cursor()
     req0 = "SELECT FLAG, name  FROM \"insurances\" WHERE key LIKE \"{0}\" ".format(idInsurance)
     cursor.execute(req0)
@@ -107,5 +105,42 @@ def updateFlag(idInsurance):
         else:
             return -1
     else:
-        # Cas où il ne trouve pas
         return -1
+
+def createInsuranceContract(contractKey,codeAssurance,codeDeal, code_facility,amount,currency):
+    conn = sql.connect('DB/insuranceDB.db')
+    cursor = conn.cursor()
+    req0 = "SELECT id  FROM \"insurance_contracts\" WHERE key LIKE \"{0}\" ".format(contractKey)
+    cursor.execute(req0)
+    ret = cursor.fetchall()
+
+    
+    res = searchInsuranceByKey(codeAssurance)
+    if res == -1:
+        return False 
+    req1 = "INSERT INTO \"insurance_contracts\" (key,insurance_code,deal_code,facility_code,amount,currency ) VALUES (\"{0}\",\"{1}\", \"{2}\", \"{3}\",\"{4}\",\"{5}\")".format(contractKey,codeAssurance,codeDeal, code_facility,amount,currency)
+    print(req1)
+    cursor.execute(req1)
+    conn.commit()
+    return True
+
+def searchInsuranceContractByDeal(idDeal):
+    conn = sql.connect('DB/insuranceDB.db')
+    
+    cursor = conn.cursor()
+    req0 = "SELECT key,insurance_code,facility_code,amount,currency FROM \"insurance_contracts\" WHERE deal_code LIKE \"{0}\" GROUP BY facility_code ".format(idDeal)
+    cursor.execute(req0)
+    ret = cursor.fetchall()
+    res = dict()
+
+    if len(ret) > 0:
+        res["key"] = ret[0][0]
+        res["insurance_code"] = ret[0][1]
+        res["facility_code"] = ret[0][2]
+        res["amount"] = ret[0][3]
+        res["currency"] = ret[0][4]
+
+    else:
+        return -1
+
+    return res
