@@ -7,9 +7,9 @@ FLAG_CHANGE_SUCCESS = 1
 FLAG_CHANGE_FAIL = 0
 
 def initDB():
-    conn = sql.connect('db/insuranceDB.db')
+    conn = sql.connect('insuranceDB.db')
 
-    with open('DB/create_db.json') as json_file:
+    with open('create_db.json') as json_file:
         cr_in = json.load(json_file)
     for i in cr_in:
         cursor = conn.cursor()
@@ -20,7 +20,7 @@ def initDB():
 
 def allInsurances():
 
-    conn = sql.connect('DB/insuranceDB.db')
+    conn = sql.connect('insuranceDB.db')
 
     cursor = conn.cursor()
     req0 = "SELECT key, name, amount, FLAG  FROM \"insurance\""
@@ -30,6 +30,7 @@ def allInsurances():
 
     for insur in ret:
         res[insur[0]] = dict()
+        print(res[insur[0]])
         res[insur[0]]["name"] = insur[1]
         res[insur[0]]["amount"] = insur[2]
         res[insur[0]]["FLAG"]  = insur[3]
@@ -40,7 +41,7 @@ def allInsurances():
 def searchInsuranceByKey(idInsurance):
     
 
-    conn = sql.connect('DB/insuranceDB.db')
+    conn = sql.connect('insuranceDB.db')
     
     cursor = conn.cursor()
     req0 = "SELECT name, amount, FLAG  FROM \"insurance\" WHERE key LIKE \"{0}\" ".format(idInsurance)
@@ -61,7 +62,7 @@ def searchInsuranceByKey(idInsurance):
 
 def createInsurance(idInsurance,n,m):
 
-    conn = sql.connect('DB/insuranceDB.db')
+    conn = sql.connect('insuranceDB.db')
     cursor = conn.cursor()
     req0 = "SELECT id  FROM \"insurance\" WHERE key LIKE \"{0}\" ".format(idInsurance)
     cursor.execute(req0)
@@ -70,7 +71,7 @@ def createInsurance(idInsurance,n,m):
     if len(ret) > 0:
         return False
     else:
-        req1 = "INSERT INTO \"insurance\" (key,name ,amount,FLAG ) VALUES (\"{0}\",n, m, TRUE)".format(idInsurance)
+        req1 = "INSERT INTO \"insurance\" (key,name ,amount,FLAG ) VALUES (\"{0}\",\"{1}\", \"{2}\", TRUE)".format(idInsurance, n, m)
         print(req1)
         cursor.execute(req1)
         conn.commit()
@@ -80,7 +81,7 @@ def createInsurance(idInsurance,n,m):
 
 def updateFlag(idInsurance):
     
-    conn = sql.connect('DB/insuranceDB.db')
+    conn = sql.connect('insuranceDB.db')
 
     cursor = conn.cursor()
     req0 = "SELECT FLAG, name  FROM \"insurance\" WHERE key LIKE \"{0}\" ".format(idInsurance)
@@ -112,3 +113,4 @@ def updateFlag(idInsurance):
         # Cas où il ne trouve pas
         return -1
 
+print(allInsurances())
