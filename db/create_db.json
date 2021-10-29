@@ -1,4 +1,6 @@
 {
   "insurance":
-  "CREATE TABLE IF NOT EXISTS \"insurance\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \"key\" TEXT NOT NULL UNIQUE, \"name\" TEXT, \"amount\",\"FLAG\" BOOLEAN NOT NULL)"
+  "CREATE TABLE IF NOT EXISTS \"insurances\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \"key\" TEXT NOT NULL UNIQUE, \"name\" TEXT, \"FLAG\" BOOLEAN NOT NULL)",
+  "insurance_contract":
+  "CREATE TABLE IF NOT EXISTS \"insurance_contracts\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \"key\" TEXT NOT NULL UNIQUE,insurance_code TEXT REFERENCES insurances(key) ,\"deal_code\" TEXT, \"facility_code\" TEXT, \"amount\" FLOAT, \"currency\" TEXT)"
 }
