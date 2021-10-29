@@ -1,5 +1,6 @@
 import sqlite3 as sql
 import json
+import datetime as dt
 
 
 FLAG_CHANGE_SUCCESS = 1
@@ -8,7 +9,7 @@ FLAG_CHANGE_FAIL = 0
 def initDB():
     conn = sql.connect('db/insuranceDB.db')
 
-    with open('DB/create_db.json') as json_file:
+    with open('db/create_db.json') as json_file:
         cr_in = json.load(json_file)
     for i in cr_in:
         cursor = conn.cursor()
@@ -22,7 +23,7 @@ def allInsurances():
     conn = sql.connect('DB/insuranceDB.db')
 
     cursor = conn.cursor()
-    req0 = "SELECT key, name, amount, FLAG  FROM \"insurance\""
+    req0 = "SELECT key, name, FLAG  FROM \"insurances\""
     cursor.execute(req0)
     ret = cursor.fetchall()
     res = dict()
@@ -30,8 +31,7 @@ def allInsurances():
     for insur in ret:
         res[insur[0]] = dict()
         res[insur[0]]["name"] = insur[1]
-        res[insur[0]]["amount"] = insur[2]
-        res[insur[0]]["FLAG"]  = insur[3]
+        res[insur[0]]["FLAG"]  = insur[2]
 
     return res
 
@@ -42,15 +42,14 @@ def searchInsuranceByKey(idInsurance):
     conn = sql.connect('DB/insuranceDB.db')
     
     cursor = conn.cursor()
-    req0 = "SELECT name, amount, FLAG  FROM \"insurance\" WHERE key LIKE \"{0}\" ".format(idInsurance)
+    req0 = "SELECT name, FLAG  FROM \"insurances\" WHERE key LIKE \"{0}\" ".format(idInsurance)
     cursor.execute(req0)
     ret = cursor.fetchall()
     res = dict()
 
     if len(ret) > 0:
         res["name"] = ret[0][0]
-        res["amount"] = ret[0][1]
-        res["FLAG"] = ret[0][2]
+        res["flag"] = ret[0][1]
 
     else:
         return -1
@@ -58,18 +57,18 @@ def searchInsuranceByKey(idInsurance):
     return res
 
 
-def createInsurance(idInsurance,n,m):
+def createInsurance(idInsurance,n,f):
 
     conn = sql.connect('DB/insuranceDB.db')
     cursor = conn.cursor()
-    req0 = "SELECT id  FROM \"insurance\" WHERE key LIKE \"{0}\" ".format(idInsurance)
+    req0 = "SELECT id FROM \"insurances\" WHERE key LIKE \"{0}\" ".format(idInsurance)
     cursor.execute(req0)
     ret = cursor.fetchall()
 
     if len(ret) > 0:
         return False
     else:
-        req1 = "INSERT INTO \"insurance\" (key,name ,amount,FLAG ) VALUES (\"{0}\",\"{1}\", \"{2}\", 1)".format(idInsurance,n,m)
+        req1 = "INSERT INTO \"insurances\" (key,name,FLAG ) VALUES (\"{0}\",\"{1}\",\"{2}\")".format(idInsurance,n,f)
         print(req1)
         cursor.execute(req1)
         conn.commit()
@@ -82,7 +81,7 @@ def updateFlag(idInsurance):
     conn = sql.connect('DB/insuranceDB.db')
 
     cursor = conn.cursor()
-    req0 = "SELECT FLAG, name  FROM \"insurance\" WHERE key LIKE \"{0}\" ".format(idInsurance)
+    req0 = "SELECT FLAG, name  FROM \"insurances\" WHERE key LIKE \"{0}\" ".format(idInsurance)
     cursor.execute(req0)
     ret = cursor.fetchall()
 
@@ -93,7 +92,7 @@ def updateFlag(idInsurance):
         res["name"] = ret[0][1]
         if(ret[0][0] == 1):
 
-            req1 = "UPDATE \"insurance\" SET FLAG = 0 WHERE key LIKE \"{0}\"".format(idInsurance)
+            req1 = "UPDATE \"insurances\" SET FLAG = 0 WHERE key LIKE \"{0}\"".format(idInsurance)
             cursor.execute(req1)
             conn.commit()
 
@@ -101,7 +100,7 @@ def updateFlag(idInsurance):
             return res
         elif (ret[0][0] == 0):
             res["change_success"] = FLAG_CHANGE_SUCCESS
-            req2 = "UPDATE \"insurance\" SET FLAG = 1 WHERE key LIKE \"{0}\"".format(idInsurance)
+            req2 = "UPDATE \"insurances\" SET FLAG = 1 WHERE key LIKE \"{0}\"".format(idInsurance)
             cursor.execute(req2)
             conn.commit()
             return res
@@ -110,4 +109,3 @@ def updateFlag(idInsurance):
     else:
         # Cas où il ne trouve pas
         return -1
-

@@ -13,11 +13,12 @@ name_space = api.namespace('insurances', description='insurances APIs')
 resource_fields = api.model('Resource', {
     'code_insurance': fields.String,
     'insurance_name': fields.String,
-    'amount': fields.Integer
+    'insurance_actived': fields.Boolean,
+
 })
 
 
-@api.route('/insurances')
+@api.route('/api/v1/insurances')
 class insurances(Resource):
     @api.response(200, 'Success')
     def get(self):
@@ -35,16 +36,17 @@ class insurances(Resource):
         print (content)
         code = content['code_insurance']
         name = content['insurance_name']
-        insur_amount = content['amount']
+        actived = content['insurance_actived']
 
-        response = db_binder.createInsurance(code, name,insur_amount)
+
+        response = db_binder.createInsurance(code, name,actived)
         if response == False:
             return {'error': 'wrong request'}, 400
         result = json.dumps(response)
         return jsonify(result)
 
 
-@api.route('/insurances/<code>')
+@api.route('/api/v1/insurances/<code>')
 @api.doc(params={'code': 'insurance code'})
 class insuranceid(Resource):
     @api.response(200, 'Success')
@@ -65,6 +67,6 @@ class insuranceid(Resource):
         result = json.dumps(response)
         if response['change_success'] == 1:
             # respPut = changeContract(code_contract)
-            return
+            return "Flag changed with success"
         return jsonify(result)
 

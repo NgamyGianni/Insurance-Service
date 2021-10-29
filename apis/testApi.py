@@ -8,13 +8,18 @@ class ApiTest(unittest.TestCase):
         self.BASE_URL = 'http://127.0.0.1:8093/'
 
     def test_01_insurance(self):
+
+        #given
         data = {
             "code_insurance" : "L12fd5",
             "name_insurance" : "NATIXIS",
-            "amount" : 15000
         }
+
+        #when
         r = requests.post(self.BASE_URL + "insurances", json=data)
         print("testCreateInsurance" + r.text)
+
+        #then
         self.assertEqual(r.status_code, requests.codes.ok)
 
     def test_02_getInsurance(self):
