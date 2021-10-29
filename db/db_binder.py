@@ -1,6 +1,5 @@
 import sqlite3 as sql
 import json
-import datetime as dt
 
 
 FLAG_CHANGE_SUCCESS = 1
@@ -50,9 +49,9 @@ def searchInsuranceByKey(idInsurance):
     res = dict()
 
     if len(ret) > 0:
-        res["status"] = ret[0][0]
-        res["name"] = ret[0][1]
-        res["amount"] = ret[0][2]
+        res["name"] = ret[0][0]
+        res["amount"] = ret[0][1]
+        res["FLAG"] = ret[0][2]
 
     else:
         return -1
@@ -71,7 +70,8 @@ def createInsurance(idInsurance,n,m):
     if len(ret) > 0:
         return False
     else:
-        req1 = "INSERT INTO \"insurance\" (key,name ,amount,FLAG ) VALUES (\"{0}\",\"{1}\", \"{2}\", TRUE)".format(idInsurance, n, m)
+
+        req1 = "INSERT INTO \"insurance\" (key,name ,amount,FLAG ) VALUES (\"{0}\",\"{1}\", \"{2}\", 1)".format(idInsurance,n,m)
         print(req1)
         cursor.execute(req1)
         conn.commit()
