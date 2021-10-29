@@ -90,17 +90,17 @@ def updateFlag(idInsurance):
     if len(ret) > 0:
         # Cas où il trouve
         res["name"] = ret[0][1]
-        if(ret[0][0] == 1):
+        if((ret[0][0] == 1) or (ret[0][0] == "True")):
 
-            req1 = "UPDATE \"insurances\" SET FLAG = 0 WHERE key LIKE \"{0}\"".format(idInsurance)
+            req1 = "UPDATE \"insurances\" SET FLAG = \"{1}\" WHERE key LIKE \"{0}\"".format(idInsurance,"False")
             cursor.execute(req1)
             conn.commit()
 
             res["change_success"] = FLAG_CHANGE_SUCCESS
             return res
-        elif (ret[0][0] == 0):
+        elif (ret[0][0] == 0) or (ret[0][0] == "False"):
             res["change_success"] = FLAG_CHANGE_SUCCESS
-            req2 = "UPDATE \"insurances\" SET FLAG = 1 WHERE key LIKE \"{0}\"".format(idInsurance)
+            req2 = "UPDATE \"insurances\" SET FLAG = \"{1}\" WHERE key LIKE \"{0}\"".format(idInsurance,"True")
             cursor.execute(req2)
             conn.commit()
             return res
